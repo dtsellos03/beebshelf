@@ -1,5 +1,5 @@
 import {Button, Image, Card, Dropdown, Modal, Icon, Header, Rating, Form, TextArea} from "semantic-ui-react";
-import {changeBookStatus, COMPLETE, READING, QUEUE, ATTEMPTED} from "../util/backend";
+import {changeBookStatus, COMPLETE, READING, QUEUE, ATTEMPTED, WISHLIST} from "../util/backend";
 
 import React from "react";
 const ago = require('s-ago');
@@ -25,6 +25,11 @@ const friendOptions = [
         text: 'Attempted',
         value: 'attempted',
     },
+    {
+        key: 'wishlist',
+        text: 'Wishlist',
+        value: 'wishlist'
+    }
 ];
 
 class LibraryBook extends React.Component {
@@ -74,7 +79,8 @@ class LibraryBook extends React.Component {
             'complete': 'completedDate',
             'queue': 'queuedDate',
             'reading': 'startedReadingDate',
-            'attempted': 'attemptedDate'
+            'attempted': 'attemptedDate',
+            'wishlist': 'wishlistDate'
         };
         let date = ago(b[dateMap[origin]].toDate() || new Date());
         return       <Card.Meta>

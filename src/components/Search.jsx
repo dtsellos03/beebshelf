@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card } from 'semantic-ui-react'
-import renderBook from './Card';
+import RenderBook from './Card';
 import {searchBooks} from "../util/backend";
 import Input from "semantic-ui-react/dist/commonjs/elements/Input";
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
@@ -33,7 +33,7 @@ class BookSearch extends React.Component {
                 action={{ icon: 'search', onClick: this.updateBooks  }} placeholder='Search...' />
             </Form>
         <Card.Group>
-            {this.state.books.map(e => renderBook(e))}
+            {this.state.books.map(e => <RenderBook b={e} />) }
         </Card.Group>
 </>
     }

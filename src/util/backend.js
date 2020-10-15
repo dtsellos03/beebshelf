@@ -5,6 +5,7 @@ const COMPLETE = 'complete';
 const QUEUE = 'queue';
 const ATTEMPTED = 'attempted';
 const READING = 'reading';
+const WISHLIST = 'wishlist';
 
 async function searchBooks(q) {
     var searchBooks = firebase.functions().httpsCallable('searchBooks');
@@ -38,10 +39,11 @@ async function fetchBooksForUser() {
 
 
 
-async function addBookToWishlist(book) {
+async function addBookToWishlist(book, status) {
  const trimmedBook = transformBook(book);
- trimmedBook.status = QUEUE;
+ trimmedBook.status = status;
  trimmedBook.queuedDate = new Date();
+ trimmedBook.wishlistDate = new Date();
     const db = firebase.firestore();
     let user = firebase.auth().currentUser.uid;
     const docRef = db.collection('users').doc(user).collection('books').doc(trimmedBook.key);
@@ -92,6 +94,9 @@ async function changeBookStatus(destination, book, reviewData) {
             break;
         case ATTEMPTED:
             statusUpdate['attemptedDate'] = now;
+            break;
+        case WISHLIST:
+            statusUpdate['wishlistDate'] = now;
             break;
         default :
             throw new Error();

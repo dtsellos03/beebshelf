@@ -1,14 +1,18 @@
-import {Button, Image, Card} from "semantic-ui-react";
+import {Button, Image, Card, Icon} from "semantic-ui-react";
 import Label from "semantic-ui-react/dist/commonjs/elements/Label";
 import {addBookToWishlist} from "../util/backend";
-import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
-import React from "react";
+import React, { useState } from 'react';
 
-export function renderBook(b, showActions=true) {
-    return  <Card
+class  RenderBook extends React.Component {
+    state = {
+        isAdded: false
+    }
+    render() {
+        const { b } = this.props;
+    return <Card
         key={(b.industryIdentifiers || [{identifier: '4'}])[0].identifier}
     >
-        <Card.Content >
+        <Card.Content>
             <Image
                 floated='left'
                 size='tiny'
@@ -16,16 +20,25 @@ export function renderBook(b, showActions=true) {
             />
             <Card.Header>{b.title}</Card.Header>
             <Card.Meta>{(b.authors || []).join(', ')}</Card.Meta>
-            <Label icon='file alternate outline' content={b.pageCount} />
-            <Label icon='clock' content={(b.publishedDate || '????').substring(0,4)} />
+            <Label icon='file alternate outline' content={b.pageCount}/>
+            <Label icon='clock' content={(b.publishedDate || '????').substring(0, 4)}/>
             <Card.Description>
-                {(b.description || '').slice(0,100)}
+                {(b.description || '').slice(0, 100)}
             </Card.Description>
         </Card.Content>
-        {showActions && <Card.Content extra>
-                <Button onClick={() => addBookToWishlist(b)}icon><Icon name='plus' /></Button>
-        </Card.Content>}
+        {!this.state.isAdded ? <Card.Content extra>
+            <Button onClick={() => {
+                this.setState({isAdded: true});
+                addBookToWishlist(b, 'queue')
+            }
+            } icon>Queue</Button>
+            <Button onClick={() => {
+                    this.setState({isAdded: true});
+                addBookToWishlist(b, 'wishlist')
+            }} icon>Wishlist</Button>
+        </Card.Content> :  <Button icon labelPosition='right' disabled color='green'>Saved <Icon name='checkmark' /></Button>}
     </Card>
 }
+}
 
-export default renderBook
+export default RenderBook;

@@ -10,7 +10,8 @@ class MyLibrary extends React.Component {
     queue: [],
     complete: [],
         reading: [],
-        attempted:[]
+        attempted:[],
+        wishlist: []
    };
 
     async componentDidMount() {
@@ -19,7 +20,8 @@ class MyLibrary extends React.Component {
             queue: books.queue || [],
             complete: books.complete || [],
             reading: books.reading || [],
-            attempted: books.attempted || []
+            attempted: books.attempted || [],
+            wishlist: books.wishlist || []
         });
     }
 
@@ -57,6 +59,14 @@ class MyLibrary extends React.Component {
                     {this.state.queue.map((b, i) =>     <LibraryCard
                         key={b.key}
                         b={b} i={i} origin={'queue'} updateBookCategory={this.updateBookCategory} />)}
+                </Card.Group>
+            </Segment>
+            <Segment vertical>
+                <Header>Wishlist ({this.state.wishlist.length})</Header>
+                <Card.Group>
+                    {this.state.wishlist.map((b, i) =>     <LibraryCard
+                        key={b.key}
+                        b={b} i={i} origin={'wishlist'} updateBookCategory={this.updateBookCategory} />)}
                 </Card.Group>
             </Segment>
             <Segment vertical>
