@@ -86,7 +86,7 @@ class App extends React.Component {
                 <Menu secondary>
                     <Menu.Item
                         name='Library'
-                        as={Link} to='/mylibrary'
+                        as={Link} to='/'
                         active={activeItem === 'home'}
                         onClick={this.handleItemClick}
                     />
@@ -109,9 +109,6 @@ class App extends React.Component {
                         <Search />
                     </Route>
                     <Route path="/">
-                        <MyLibrary />
-                    </Route>
-                    <Route path="/mylibrary">
                         <MyLibrary />
                     </Route>
                 </Switch>
