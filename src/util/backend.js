@@ -7,6 +7,10 @@ const ATTEMPTED = 'attempted';
 const READING = 'reading';
 const WISHLIST = 'wishlist';
 
+export const AUTHOR_LAST_NAME = 'author_last_name';
+export const DATE = 'date';
+export const RATING_SORT = 'rating';
+
 async function searchBooks(q) {
     var searchBooks = firebase.functions().httpsCallable('searchBooks');
     try {
@@ -51,62 +55,74 @@ async function addBookToWishlist(book, status) {
 
 }
 
-async function addBookToCompleted(book) {
-}
 
-// completed book
-// completed date, rating, review, status
-
-// add to reading
-// started reading date, status
-
-// set to queue
-//
-
-async function changeBookStatus2(status, bookID) {
+async function deleteBook(book) {
     const db = firebase.firestore();
     let user = firebase.auth().currentUser.uid;
-    const docRef = db.collection('users').doc(user).collection('books').doc(bookID);
-    await docRef.update({status: status});
+    const docRef = db.collection('users').doc(user).collection('books').doc(book.key);
+    await docRef.delete();
 }
 
-// queuedDate
-// abandonedDate
-// startedReadingDate
-// completedDate
 async function changeBookStatus(destination, book, reviewData) {
     const db = firebase.firestore();
     let user = firebase.auth().currentUser.uid;
     const docRef = db.collection('users').doc(user).collection('books').doc(book.key);
     let statusUpdate = {};
     const now = new Date();
-    switch (destination) {
-        case QUEUE:
-            statusUpdate['queuedDate'] = now;
-            break;
-        case READING:
-            statusUpdate['startedReadingDate'] = now;
-            break;
-        case COMPLETE:
+    if (destination ===COMPLETE) {
             statusUpdate['rating'] = reviewData.rating;
             statusUpdate['reviewText'] = reviewData.reviewText;
             statusUpdate['completedDate'] = now;
-            break;
-        case ATTEMPTED:
-            statusUpdate['attemptedDate'] = now;
-            break;
-        case WISHLIST:
-            statusUpdate['wishlistDate'] = now;
-            break;
-        default :
-            throw new Error();
     }
+    const dateToUpdate = getCategoryDate(destination);
+    statusUpdate[dateToUpdate] = now;
     statusUpdate['status'] = destination;
     await docRef.update(statusUpdate);
     let doc = await docRef.get();
     let retrieved = doc.data();
     retrieved.key = doc.id;
     return retrieved;
+}
+
+function sortBooks(order, cat, books) {
+    switch (order) {
+        case RATING_SORT:
+            return _.orderBy(books, ['rating'], ['desc']);
+        case AUTHOR_LAST_NAME:
+            return books.sort((a, b) => {
+                const sFunc = (book) => {
+                    let authorSplit = book.author.split(' ');
+                    return authorSplit[authorSplit.length - 1].toUpperCase()
+                };
+                if (sFunc(a) < sFunc(b)) {
+                    return -1;
+                }
+                if (sFunc(a) > sFunc(b)) {
+                    return 1;
+                }
+                return 0;
+            })
+        case DATE:
+            const sortKey = getCategoryDate(cat);
+            return _.orderBy(books, [sortKey], ['asc']);
+        default:
+            throw new Error('Cant sort without key');
+    }
+}
+
+function getCategoryDate(cat) {
+    switch(cat) {
+        case COMPLETE:
+           return 'completedDate';
+        case ATTEMPTED:
+            return 'attemptedDate';
+        case WISHLIST:
+            return 'wishlistDate';
+        case QUEUE:
+            return 'queuedDate';
+        case READING:
+            return  'startedReadingDate';
+    }
 }
 
 
@@ -119,4 +135,4 @@ function transformBook(b) {
      return newObj;
 }
 
-export { searchBooks, fetchBooksForUser, addBookToWishlist, changeBookStatus, COMPLETE, QUEUE, ATTEMPTED, READING}
+export { searchBooks, fetchBooksForUser, addBookToWishlist, changeBookStatus, deleteBook, sortBooks, COMPLETE, QUEUE, ATTEMPTED, READING, WISHLIST}

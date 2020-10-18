@@ -104,26 +104,14 @@ class App extends React.Component {
                         />
                     </Menu.Menu>
                 </Menu>
-            {/*<div>*/}
-                {/*<nav>*/}
-                    {/*<ul>*/}
-                        {/*<li>*/}
-                            {/*<Button><Link to="/mylibrary">My Library</Link></Button>*/}
-                        {/*</li>*/}
-                        {/*<li>*/}
-                            {/*<Link to="/search">Search</Link>*/}
-                        {/*</li>*/}
-                    {/*</ul>*/}
-                {/*</nav>*/}
-                {/*<h1>My App</h1>*/}
-                {/*<p>Welcome {firebase.auth().currentUser.displayName}! You are now signed-in!</p>*/}
-                {/*<a onClick={() => firebase.auth().signOut()}>Sign-out</a>*/}
-            {/*</div>*/}
                 <Switch>
                     <Route path="/search">
                         <Search />
                     </Route>
                     <Route path="/">
+                        <MyLibrary />
+                    </Route>
+                    <Route path="/mylibrary">
                         <MyLibrary />
                     </Route>
                 </Switch>

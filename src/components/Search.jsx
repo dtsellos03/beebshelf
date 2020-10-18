@@ -18,7 +18,6 @@ class BookSearch extends React.Component {
     updateBooks = async () => {
         this.setState({books: []})
         let apiResp = await searchBooks(this.state.searchTerm);
-        console.log(this.state.searchTerm, apiResp)
         this.setState({books: apiResp.data})
     };
 

@@ -30,12 +30,19 @@ const friendOptions = [
         text: 'Wishlist',
         value: 'wishlist'
     }
+    ,
+    {
+        key: 'delete',
+        text: 'Delete',
+        value: 'delete'
+    }
 ];
 
 class LibraryBook extends React.Component {
 
     state = {
         reviewModal: false,
+        deleteModal: false,
         rating: this.props.b.rating || 5,
         reviewText: null,
     };
@@ -47,12 +54,16 @@ class LibraryBook extends React.Component {
         })
     };
 
-    openModal = () => {
-        this.setState({reviewModal: true})
+    openModal = (key) => {
+        const update = {};
+        update[key] = true;
+        this.setState(update)
     };
 
-    closeModal = () => {
-        this.setState({reviewModal: false})
+    closeModal = (key) => {
+        const update = {};
+        update[key] = false;
+        this.setState(update)
     }
 
     finishReview = () => {
@@ -61,9 +72,15 @@ class LibraryBook extends React.Component {
             reviewText: this.state.reviewText,
         };
         this.updateBookStatus(COMPLETE, reviewData)
-
         this.setState({
             reviewModal: false
+        });
+    };
+
+    confirmDelete = () => {
+        this.props.deleteBook(this.props.b, this.props.origin)
+        this.setState({
+            deleteModal: false
         });
     };
 
@@ -90,8 +107,8 @@ class LibraryBook extends React.Component {
 
     modalComp = () =>  <Modal
         size='tiny'
-        onClose={this.closeModal}
-        onOpen={this.openModal}
+        onClose={() => this.closeModal('reviewModal')}
+        onOpen={() => this.openModal('reviewModal')}
         open={this.state.reviewModal}
     >
         <Modal.Content image>
@@ -134,10 +151,37 @@ class LibraryBook extends React.Component {
         </Modal.Actions>
     </Modal>;
 
+    deleteModal = () =>  <Modal
+        basic
+        onClose={() => this.closeModal('deleteModal')}
+        onOpen={() => this.openModal('deleteModal')}
+        open={this.state.deleteModal}
+        size='small'
+    >
+        <Header icon>
+            <Icon name='delete' />
+            Delete {this.props.b.title}
+        </Header>
+        <Modal.Content>
+            <p>
+                Are you sure you want to delete {this.props.b.title} from your library?
+            </p>
+        </Modal.Content>
+        <Modal.Actions>
+            <Button  color='red' inverted  onClick={this.confirmDelete}>
+                <Icon name='remove' /> Remove
+            </Button>
+            <Button color='green' inverted onClick={() => this.closeModal('deleteModal')}>
+                <Icon name='checkmark' /> Cancel
+            </Button>
+        </Modal.Actions>
+    </Modal>
+
     render() {
         const b = this.props.b;
         return  <>
             {this.modalComp()}
+            {this.deleteModal()}
             <Card
                 key={(b.industryIdentifiers || [{identifier: '4'}])[0].identifier}
             >
@@ -150,30 +194,40 @@ class LibraryBook extends React.Component {
                     <Card.Header>{b.title}</Card.Header>
                     <Card.Meta>{b.author}
                     <br/>
-                        <Dropdown
-                            text='Edit'
-                            icon='filter'
-                            className='icon'
-                            labeled
-                            button
-                            onChange={(v, e) => {
-                                if (e.value === COMPLETE) {
-                                    this.setState({
-                                        reviewModal: true
-                                    })
-                                } else {
-                                    this.updateBookStatus(e.value, {});
-                                }
-                            }}
-                            options={friendOptions}
-                        />
+
                     </Card.Meta>
                     {this.dateSection()}
                     {this.reviewSection()}
                 </Card.Content>
                 <Card.Content extra>
-                    <span  style={{paddingRight: 10}} ><Icon name='file alternate outline'/>{b.pageCount}</span>
+                    <span style={{display: 'flex', alignContent: 'spaceBetween', alignItems: 'center'}}>
+                    <><span  style={{paddingRight: 10}} ><Icon name='file alternate outline'/>{b.pageCount}</span>
                     <Icon name='clock' />{(b.publishedDate || '????').substring(0,4)}
+                    </>
+                         <Dropdown
+                             text='Edit'
+                             style={{marginLeft: 'auto'}}
+                             icon='filter'
+                             className='icon'
+                             labeled
+                             button
+                             onChange={(v, e) => {
+                                 if (e.value === 'delete') {
+                                     this.setState({
+                                         deleteModal: true
+                                     })
+                                 }
+                                 else if (e.value === COMPLETE) {
+                                     this.setState({
+                                         reviewModal: true
+                                     })
+                                 } else {
+                                     this.updateBookStatus(e.value, {});
+                                 }
+                             }}
+                             options={friendOptions}
+                         />
+                   </span>
                 </Card.Content>
             </Card>
             </>
