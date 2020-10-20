@@ -26,7 +26,6 @@ class BookSearch extends React.Component {
             <Form onSubmit={this.updateBooks} style={{padding: 20}}>
             <Input
                 onChange = {(event) => {
-                    console.log(event.target.value)
                     this.setState({searchTerm: event.target.value})
                 }}
                 action={{ icon: 'search', onClick: this.updateBooks  }} placeholder='Search...' />

@@ -1,7 +1,10 @@
-import {Button, Image, Card, Dropdown, Modal, Icon, Header, Rating, Form, TextArea} from "semantic-ui-react";
+import {Button, Image, Card, Dropdown, Modal, Icon, Header, Rating, Form, TextArea, Label} from "semantic-ui-react";
 import {changeBookStatus, COMPLETE, READING, QUEUE, ATTEMPTED, WISHLIST} from "../util/backend";
+import placehold from '../assets/placehold.png';
 
 import React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const ago = require('s-ago');
 
 const friendOptions = [
@@ -43,6 +46,8 @@ class LibraryBook extends React.Component {
     state = {
         reviewModal: false,
         deleteModal: false,
+        completedDate: this.props.b.completedDate?  this.props.b.completedDate.toDate() : new Date(),
+        startedReadingDate: this.props.b.startedReadingDate?  this.props.b.startedReadingDate.toDate() : new Date(),
         rating: this.props.b.rating || 5,
         reviewText: null,
     };
@@ -70,6 +75,8 @@ class LibraryBook extends React.Component {
         const reviewData = {
             rating: this.state.rating,
             reviewText: this.state.reviewText,
+            startedReadingDate: this.state.startedReadingDate,
+            completedDate: this.state.completedDate
         };
         this.updateBookStatus(COMPLETE, reviewData)
         this.setState({
@@ -85,8 +92,32 @@ class LibraryBook extends React.Component {
     };
 
     reviewSection = () => {
+        const ratingMap = {
+            '0': 'brown',
+            '1': 'brown',
+            '2': 'brown',
+            '3': 'grey',
+            '4': 'orange',
+            '5': 'yellow',
+            '6': 'teal',
+            '7': 'olive',
+            '8': 'green',
+            '9': 'green',
+            '10': 'green'
+        };
+        const difference =  this.state.completedDate.getTime() - this.state.startedReadingDate.getTime();
+        const days = Math.ceil(difference / (1000 * 3600 * 24));
         return this.props.origin === COMPLETE && <>
-            <Card.Meta>{this.props.b.rating} / 10</Card.Meta>
+            <Card.Meta>
+                <Label color={ratingMap[this.props.b.rating.toString()]}>
+                    <Icon name='star' style={{paddingRight: 5}} />
+                    {this.props.b.rating} / 10
+                </Label>
+                <Label>
+                    <Icon name='clock' style={{paddingRight: 5}} />
+                    {days} days
+                </Label>
+               </Card.Meta>
             </>;
     };
 
@@ -112,7 +143,7 @@ class LibraryBook extends React.Component {
         open={this.state.reviewModal}
     >
         <Modal.Content image>
-            <Image size='medium' src={this.props.b.thumbnail}  />
+            <Image size='medium' src={this.props.b.thumbnail || placehold}  />
             <Modal.Description>
                 <Header>{this.props.b.title}</Header>
                 <Form>
@@ -135,10 +166,18 @@ class LibraryBook extends React.Component {
                     }}
                     icon='heart' defaultRating={this.props.b.rating || 5} maxRating={10} />
                 <p>{this.state.rating || 5} / 10</p>
+                <h5>Started Reading</h5>
+                <DatePicker selected={this.state.startedReadingDate} onChange={date => this.setState({
+                    startedReadingDate: date
+                })} />
+                <h5>Completed Date</h5>
+                <DatePicker selected={this.state.completedDate} onChange={date => this.setState({
+                 completedDate: date
+                })} />
             </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-            <Button color='black' onClick={this.closeModal}>
+            <Button color='black' onClick={() => this.closeModal('reviewModal')}>
                 Cancel
             </Button>
             <Button
@@ -178,18 +217,26 @@ class LibraryBook extends React.Component {
     </Modal>
 
     render() {
+        const cardColorMap = {
+            'queue': 'blue',
+            'reading': 'teal',
+            'attempted': 'brown',
+            'wishlist': 'grey',
+            'complete': 'green'
+        }
         const b = this.props.b;
+
         return  <>
             {this.modalComp()}
             {this.deleteModal()}
-            <Card
+            <Card  color={cardColorMap[this.props.origin]}
                 key={(b.industryIdentifiers || [{identifier: '4'}])[0].identifier}
             >
                 <Card.Content >
                     <Image
                         floated='left'
                         size='tiny'
-                        src={b.thumbnail}
+                        src={b.thumbnail || placehold}
                     />
                     <Card.Header>{b.title}</Card.Header>
                     <Card.Meta>{b.author}

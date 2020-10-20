@@ -72,7 +72,8 @@ async function changeBookStatus(destination, book, reviewData) {
     if (destination ===COMPLETE) {
             statusUpdate['rating'] = reviewData.rating;
             statusUpdate['reviewText'] = reviewData.reviewText;
-            statusUpdate['completedDate'] = now;
+            statusUpdate['completedDate'] = reviewData.completedDate;
+            statusUpdate['startedReadingDate'] = reviewData.startedReadingDate;
     }
     const dateToUpdate = getCategoryDate(destination);
     statusUpdate[dateToUpdate] = now;
