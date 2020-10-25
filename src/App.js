@@ -13,6 +13,7 @@ import {
     Link
 } from "react-router-dom";
 import MyLibrary from './components/MyLibrary';
+import Collections from './components/Collections';
 import Search from './components/Search';
 
 // // Configure Firebase.
@@ -96,6 +97,12 @@ class App extends React.Component {
                         active={activeItem === 'search'}
                         onClick={this.handleItemClick}
                     />
+                    <Menu.Item
+                        name='Collections'
+                        as={Link} to='/collections'
+                        active={activeItem === 'collections'}
+                        onClick={this.handleItemClick}
+                    />
                     <Menu.Menu position='right'>
                         <Menu.Item
                             name='logout'
@@ -107,6 +114,9 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/search">
                         <Search />
+                    </Route>
+                    <Route path="/collections">
+                        <Collections />
                     </Route>
                     <Route path="/">
                         <MyLibrary />

@@ -13,6 +13,7 @@ Makefile
 /build
 
 # misc
+src/util/import.js
 .DS_Store
 .idea/
 .env.local

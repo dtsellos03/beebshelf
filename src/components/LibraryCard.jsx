@@ -1,4 +1,4 @@
-import {Button, Image, Card, Dropdown, Modal, Icon, Header, Rating, Form, TextArea, Label} from "semantic-ui-react";
+import {Button, Image, Card, Dropdown, Modal, Icon, Header, Rating, Form, TextArea, Progress, Label} from "semantic-ui-react";
 import {changeBookStatus, COMPLETE, READING, QUEUE, ATTEMPTED, WISHLIST} from "../util/backend";
 import placehold from '../assets/placehold.png';
 
@@ -69,6 +69,14 @@ class LibraryBook extends React.Component {
         const update = {};
         update[key] = false;
         this.setState(update)
+    }
+
+    topProgress = () => {
+        let {b, origin} = this.props;
+        const {pagesRead, pageCount} = b;
+        if (origin === READING && pagesRead > 0) {
+           return <Progress color='teal' percent={100 * (pagesRead || 0) / pageCount} attached='top'/>
+    }
     }
 
     finishReview = () => {
@@ -232,6 +240,7 @@ class LibraryBook extends React.Component {
             <Card  color={cardColorMap[this.props.origin]}
                 key={(b.industryIdentifiers || [{identifier: '4'}])[0].identifier}
             >
+                {this.topProgress()}
                 <Card.Content >
                     <Image
                         floated='left'
