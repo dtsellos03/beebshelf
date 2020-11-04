@@ -74,9 +74,10 @@ async function changeBookStatus(destination, book, reviewData) {
             statusUpdate['reviewText'] = reviewData.reviewText;
             statusUpdate['completedDate'] = reviewData.completedDate;
             statusUpdate['startedReadingDate'] = reviewData.startedReadingDate;
+    } else {
+        const dateToUpdate = getCategoryDate(destination);
+        statusUpdate[dateToUpdate] = now;
     }
-    const dateToUpdate = getCategoryDate(destination);
-    statusUpdate[dateToUpdate] = now;
     statusUpdate['status'] = destination;
     await docRef.update(statusUpdate);
     let doc = await docRef.get();
