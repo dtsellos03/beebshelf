@@ -39,7 +39,11 @@ class MyLibrary extends React.Component {
         attempted:[],
         wishlist: [],
         collections: [],
-        yearlyRead: 0
+        yearlyRead: 0,
+        showReading: true,
+        showQueue: true,
+        showWishlist: true,
+        showComplete: true
    };
 
     async componentDidMount() {
@@ -123,53 +127,61 @@ sortDropdown = (cat, options) =>
         }
         return <>
             <Segment vertical>
-                <Header  as='h3' block>Reading ({this.state.reading.length})</Header>
-            <Card.Group>
+                <Header
+                    onClick={() => this.setState({showReading: !this.state.showReading})}
+                    as='h3' block>Reading ({this.state.reading.length})</Header>
+                {this.state.showReading && <Card.Group>
             {this.state.reading.map((b, i) =>
                     <LibraryCard
                         key={b.key}
                 b={b} i={i} origin={'reading'}
                         {...commonFunctions} />
                 )}
-            </Card.Group>
+            </Card.Group>}
             </Segment>
             <Segment  vertical>
-                <Header  as='h3' block>Queue ({this.state.queue.length})</Header>
+                <Header
+                    onClick={() => this.setState({showQueue: !this.state.showQueue})}
+                    as='h3' block>Queue ({this.state.queue.length})</Header>
 
-                <Card.Group>
+                {this.state.showQueue && <Card.Group>
                     {this.state.queue.map((b, i) =>     <LibraryCard
                         key={b.key}
                         b={b} i={i} origin={'queue'}  {...commonFunctions} />)}
-                </Card.Group>
+                </Card.Group>}
             </Segment>
             <Segment vertical>
-                <Header  as='h3' block>
+                <Header
+                    onClick={() => this.setState({showWishlist: !this.state.showWishlist})}
+                    as='h3' block>
                             <span style={{display: 'flex'}}>
                          <>Wishlist ({this.state.wishlist.length})</>
                              <>   {this.sortDropdown(WISHLIST, wishlistSort)}</>
                             </span>
                 </Header>
-                <Card.Group>
+                {this.state.showWishlist && <Card.Group>
                     {this.state.wishlist.map((b, i) =>     <LibraryCard
                         key={b.key}
                         b={b} i={i} origin={'wishlist'}  {...commonFunctions}/>)}
-                </Card.Group>
+                </Card.Group>}
             </Segment>
             <Segment vertical>
-                <Header  as='h3' block>
+                <Header  as='h3'
+                         onClick={() => this.setState({showComplete: !this.state.showComplete})}
+                         block>
                             <span style={{display: 'flex'}}>
                          <>Complete ({this.state.complete.length})</>
                              <>   {this.sortDropdown(COMPLETE, ratingSort)}</>
                             </span>
                 </Header>
                 <> {this.yearlyProgress()} </>
-                <Card.Group>
+                {this.state.showComplete && <Card.Group>
                     {this.state.complete.map((b, i) => (
                         <LibraryCard
                             key={b.key}
                             b={b} i={i} origin={'complete'}  {...commonFunctions} />
                     ))}
-                </Card.Group>
+                </Card.Group>}
             </Segment>
             <Segment vertical>
                 <Header  as='h3' block>Attempted ({this.state.attempted.length})</Header>
