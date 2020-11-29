@@ -9,7 +9,10 @@ import {
     COMPLETE,
     QUEUE, WISHLIST
 } from "../util/backend";
-import {Card, Segment, Header, Select, Dropdown} from "semantic-ui-react";
+import {
+    getTags
+} from "../util/collections";
+import {Card, Segment, Header, Select, Dropdown, Progress} from "semantic-ui-react";
 import _ from 'lodash';
 
 const wishlistSort = [
@@ -19,6 +22,8 @@ const wishlistSort = [
         value: AUTHOR_LAST_NAME,
     },
 ];
+
+const goal = 50;
 
 const ratingSort = [{
     key: RATING_SORT,
@@ -33,17 +38,35 @@ class MyLibrary extends React.Component {
         reading: [],
         attempted:[],
         wishlist: [],
+        collections: [],
+        yearlyRead: 0
    };
 
     async componentDidMount() {
         let books = await fetchBooksForUser();
+        let colls = await getTags();
         this.setState({
             queue: books.queue || [],
             complete: books.complete || [],
             reading: books.reading || [],
             attempted: books.attempted || [],
-            wishlist: books.wishlist || []
+            wishlist: books.wishlist || [],
+            collections: colls
         });
+        this.getYearlyGoal(books.complete);
+
+    }
+
+    getYearlyGoal = (complete) => {
+        let read = 0;
+        complete.forEach((b) => {
+            if (b.completedDate.toDate().getFullYear() === new Date().getFullYear()) {
+                read ++;
+            }
+        });
+        this.setState({
+            yearlyRead: read
+        })
     }
 
     sortBookCategory = (category, order) => {
@@ -51,6 +74,8 @@ class MyLibrary extends React.Component {
         updateObj[category] = sortBooks(order, category, this.state[category]);
         this.setState(updateObj);
 }
+
+    yearlyProgress = () => <div style={{}}><Progress size={'small'} color={'yellow'} value={this.state.yearlyRead} total={goal} progress='ratio' /></div>
 
     updateBookCategory = (origin, index, destination, book) => {
        let existing = this.state[origin];
@@ -137,6 +162,7 @@ sortDropdown = (cat, options) =>
                              <>   {this.sortDropdown(COMPLETE, ratingSort)}</>
                             </span>
                 </Header>
+                <> {this.yearlyProgress()} </>
                 <Card.Group>
                     {this.state.complete.map((b, i) => (
                         <LibraryCard
