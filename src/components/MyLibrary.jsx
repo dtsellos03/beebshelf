@@ -15,7 +15,6 @@ import {
 import {Card, Statistic, Segment, Header, Image, Dropdown, Progress} from "semantic-ui-react";
 import _ from 'lodash';
 import { ToastContainer, toast } from 'react-toastify';
-import bookImage from '../assets/bookicon.png';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,6 +25,8 @@ const wishlistSort = [
         value: AUTHOR_LAST_NAME,
     },
 ];
+
+const requestImageFile = require.context('../assets', true, /.gif$/);
 
 const goal = 50;
 
@@ -77,6 +78,12 @@ class MyLibrary extends React.Component {
         })
     }
 
+    randomNum = () => {
+        const max = 27
+        const min = 1;
+       return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
     sortBookCategory = (category, order) => {
         const updateObj = {}
         updateObj[category] = sortBooks(order, category, this.state[category]);
@@ -87,7 +94,7 @@ class MyLibrary extends React.Component {
 
     toastComp = (numBooks) => <Statistic color='teal' size='huge'>
         <Statistic.Value>
-            <Image src={bookImage} className='inline' />{numBooks}
+            <Image src={requestImageFile(`./${this.randomNum()}.gif`)} className='inline' />{numBooks}
         </Statistic.Value>
         <Statistic.Label>books this year</Statistic.Label>
     </Statistic>
