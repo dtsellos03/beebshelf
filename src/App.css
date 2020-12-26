@@ -37,3 +37,20 @@
     transform: rotate(360deg);
   }
 }
+
+.Toastify__toast {
+  justify-content: center !important;
+  display: flex !important;
+  align-items: center !important;
+  align-content: center !important;
+  border-radius: 900px !important;
+}
+
+.Toastify__toast-body {
+  flex: none !important;
+}
+
+.ui.statistic>.value img, .ui.statistics .statistic>.value img {
+  max-height: 6rem !important;
+  vertical-align: middle !important;
+}

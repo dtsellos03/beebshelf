@@ -12,8 +12,12 @@ import {
 import {
     getTags
 } from "../util/collections";
-import {Card, Segment, Header, Select, Dropdown, Progress} from "semantic-ui-react";
+import {Card, Statistic, Segment, Header, Image, Dropdown, Progress} from "semantic-ui-react";
 import _ from 'lodash';
+import { ToastContainer, toast } from 'react-toastify';
+import bookImage from '../assets/bookicon.png';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const wishlistSort = [
     {
@@ -81,6 +85,13 @@ class MyLibrary extends React.Component {
 
     yearlyProgress = () => <div style={{}}><Progress size={'small'} color={'yellow'} value={this.state.yearlyRead} total={goal} progress='ratio' /></div>
 
+    toastComp = (numBooks) => <Statistic color='teal' size='huge'>
+        <Statistic.Value>
+            <Image src={bookImage} className='inline' />{numBooks}
+        </Statistic.Value>
+        <Statistic.Label>books this year</Statistic.Label>
+    </Statistic>
+
     updateBookCategory = (origin, index, destination, book) => {
        let existing = this.state[origin];
         _.remove(existing, {
@@ -93,6 +104,14 @@ class MyLibrary extends React.Component {
         stateShift[origin] = existing;
         stateShift[destination] = destinationColl;
         this.setState(stateShift)
+        if (destination === COMPLETE) {
+            toast(this.toastComp(this.state.complete.length), {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 4000,
+                hideProgressBar: true,
+                closeButton: false
+            });
+        }
 
     };
 
@@ -191,7 +210,7 @@ sortDropdown = (cat, options) =>
                         b={b} i={i} origin={'attempted'}  {...commonFunctions} />)}
                 </Card.Group>
             </Segment>
-
+            <ToastContainer />
             </>
     }
 }
