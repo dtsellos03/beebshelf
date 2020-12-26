@@ -39,11 +39,12 @@
 }
 
 .Toastify__toast {
+  background: #fff7ef !important;
   justify-content: center !important;
   display: flex !important;
   align-items: center !important;
   align-content: center !important;
-  border-radius: 900px !important;
+
 }
 
 .Toastify__toast-body {
@@ -51,6 +52,6 @@
 }
 
 .ui.statistic>.value img, .ui.statistics .statistic>.value img {
-  max-height: 6rem !important;
+  max-height: 5rem !important;
   vertical-align: middle !important;
 }
