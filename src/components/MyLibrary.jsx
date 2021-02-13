@@ -92,9 +92,9 @@ class MyLibrary extends React.Component {
 
     yearlyProgress = () => <div style={{}}><Progress size={'small'} color={'yellow'} value={this.state.yearlyRead} total={goal} progress='ratio' /></div>
 
-    toastComp = (numBooks) => <Statistic color='teal' size='huge'>
+    toastComp = () => <Statistic color='teal' size='huge'>
         <Statistic.Value>
-            <Image src={requestImageFile(`./${this.randomNum()}.gif`)} className='inline' />{numBooks}
+            <Image src={requestImageFile(`./${this.randomNum()}.gif`)} className='inline' />{this.state.yearlyRead + 1}
         </Statistic.Value>
         <Statistic.Label>books this year</Statistic.Label>
     </Statistic>
@@ -112,7 +112,7 @@ class MyLibrary extends React.Component {
         stateShift[destination] = destinationColl;
         this.setState(stateShift)
         if (destination === COMPLETE) {
-            toast(this.toastComp(this.state.complete.length), {
+            toast(this.toastComp(), {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 4000,
                 hideProgressBar: true,
